@@ -17,7 +17,7 @@ def index(request):
             last_item_id = last_inserted_item.id
         else:
             last_item_id = 0
-        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_inserted_item.id})
+        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_item_id})
     except:
         return render(request, '500.html', {'msg':"Something went wrong"})
 
