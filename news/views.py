@@ -5,7 +5,7 @@ from datetime import datetime
 from django.core.mail import send_mail,EmailMessage
 from .tasks import *
 from django.views.decorators.cache import cache_page
-
+from django.core.cache import cache
 # Create your views here.
 
 @cache_page(60 * 15)
@@ -13,6 +13,10 @@ def index(request):
     try:
         news_items = News.objects.filter(is_published = True).order_by('-published_at')
         last_inserted_item = News.objects.filter(is_published = True).last()
+        if last_inserted_item:
+            last_item_id = last_inserted_item.id
+        else:
+            last_item_id = 0
         return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_inserted_item.id})
     except:
         return render(request, '500.html', {'msg':"Something went wrong"})
