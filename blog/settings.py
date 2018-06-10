@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news.apps.NewsConfig'
+    'news.apps.NewsConfig',
+    'djcelery_email'
 ]
 
 MIDDLEWARE = [
@@ -68,8 +69,23 @@ TEMPLATES = [
     },
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'rajashekarappala@gmail.com'
+EMAIL_HOST_PASSWORD = '*********'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = True
+
 WSGI_APPLICATION = 'blog.wsgi.application'
 
+
+#celery and broker settings
+# REDIS related settings 
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600} 
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -123,3 +139,12 @@ STATIC_URL = '/static/'
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#cache settigs
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'TIMEOUT': 60,
+    }
+}

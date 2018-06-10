@@ -1,0 +1,5 @@
+django-admin
+celery
+django-celery
+celery[redis]
+python-memcached
