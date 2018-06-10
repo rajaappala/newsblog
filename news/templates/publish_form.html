@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <section class="box boxshadow p-a clear m-a" style="margin-top: 60px;margin-bottom: 100px;">
+        <div class="card">
+            <div class="card-header">
+                <strong class="mb-0">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" id="form_title">Publish new content</a>
+                </strong>
+            </div>
+            {% if msg %}
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-success" id="message">{{msg}}</div>
+            </div>
+            {%endif%}
+            <div class="card-block row">
+                <form name="content_form" id="content_form" action="/news/publish" method="POST">
+                    {% csrf_token %}
+                    <div class="row col-sm-12 col-md-12 col-lg-12" style="margin-left: 0px;">
+                        <div class="form-group col-sm-12 col-md-6 col-lg-12">
+                            <label for="title">Title</label>
+                            <input class="form-control" type="text" id="title" name="title" required>
+                        </div>
+                        <div class="form-group col-sm-12 col-md-6 col-lg-12">
+                            <label for="author">Author Name</label>
+                            <input class="form-control" type="text" id="author" name="author" required>
+                        </div>
+                        <div class="form-group col-sm-12 col-md-6 col-lg-12">
+                            <label for="synopsis">Synopsis</label>
+                            <textarea class="form-control" type="text" id="synopsis" name="synopsis" required></textarea>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                            <label for="content">Content</label>
+                            <textarea class="form-control" type="text" rows="20" id="content" name="content" required></textarea>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                            <button class="btn btn-fw btn-warning pull-left m-t-n-xs" type="button" style="margin-bottom: 5px;margin-left: 36px;" onclick="clear_data()">Clear</button>
+                            <input type="hidden" name="content_id" id="content_id"/>
+                            <button class="btn btn-fw btn-primary pull-right m-t-n-xs" type="submit" style="margin-bottom: 5px;margin-right: 36px;">Publish</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- <section class="box boxshadow p-a clear m-a">
+        <div id="Submitted_units" role="tablist" aria-multiselectable="true" >
+            <div class="card">
+                <div class="card-header">
+                    <strong class="mb-0">
+                    {% if label_list.All_Submitted_Units_Panel%}
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{label_list.All_Submitted_Units_Panel.label_text}}</a>
+                    {% endif %}
+                    </strong>
+                </div>
+                <div class="show">
+                    <div class="card-block">
+                        <table id="all_submitted_units" class="table dt-responsive table-striped table-bordered nowrap m-b-none" style="max-width: 100% !important; width: 100% !important;">
+                            <thead>
+                                <tr class="active">
+                                    <th data-priority="10000">{{label_list.Th_Unit_Name.label_text}}</th>
+                                    <th data-priority="14000">{{label_list.Th_Location.label_text}}</th>
+                                    <th data-priority="18000">{{label_list.Th_Abbreviation.label_text}}</th>
+                                    <th data-priority="16000">{{label_list.Th_Cost_Center.label_text}}</th>
+                                    <th data-priority="20000">{{label_list.Th_Crosswalk.label_text}}</th>
+                                    <th data-priority="24000">{{label_list.Th_Budgeted_ADC.label_text}}</th>
+                                    <th data-priority="22000">{{label_list.Th_DIrect_Care_Target.label_text}}</th>
+                                    <th data-priority="26000">{{label_list.Th_Sitter_Hours.label_text}}</th>
+                                    <th data-priority="28000">{{label_list.Th_PTO_Factor.label_text}}</th>
+                                    <th data-priority="30000">{{label_list.Th_PCM_FTEs.label_text}}</th>
+                                    <th data-priority="32000">{{label_list.Th_APCM_FTEs.label_text}}</th>
+                                    <th data-sortable="false" data-priority="12000">{{label_list.Th_Unit_Actions.label_text}}</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="fixed_dct" tabindex="-1" role="dialog" aria-hidden="true"> Do you want to continue</div>
+     -->
+{% endblock content %}
+{% block cssincludes %}
+<!-- <link rel="stylesheet" href='{% static "assets/datatables/css/dataTables.bootstrap.min.css" %}' />   -->
+<!-- <link rel="stylesheet" href='{% static "assets/datatables/css/responsive.bootstrap.min.css" %}' /> -->
+<link rel="stylesheet" href='{% static "Easy-Markdown/css/bootstrap-markdown.min.css" %}'>
+<style type="text/css">
+
+    .table > tbody > tr > td{
+        padding-left: 10px;
+        padding-right: 10px;
+        border-color: rgba(192, 197, 203, 0.32);
+    }
+    table.dataTable thead th,table.dataTable.no-footer
+   {
+      border: none !important;
+   }
+</style>
+{% endblock cssincludes %}
+{% block jsincludes %}
+<script type="text/javascript" language="javascript" src="{% static 'tinymce_4.7.13/tinymce/js/tinymce/tinymce.min.js'%}"></script>
+<!-- <script src='{% static "vendor/jquery/jquery.min.js" %}'></script> -->
+  <script type="text/javascript">
+  tinymce.init({
+    selector: 'textarea#content',
+    plugins: [
+		    'preview',
+		    'advlist autolink lists link image charmap print preview anchor',
+		    'searchreplace visualblocks code fullscreen',
+		    'insertdatetime media table contextmenu paste code'
+		  ],
+    toolbar: "undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | preview",
+    menubar : false,
+    statusbar: false,
+  });
+  </script>
+{% endblock jsincludes %}

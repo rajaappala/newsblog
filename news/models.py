@@ -9,6 +9,8 @@ class News(models.Model):
     title = models.CharField(max_length = 200, null=True)
     author = models.CharField(max_length = 200, null=True)
     content = models.TextField(null=True)
+    synopsis = models.TextField(null=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
+    published_at = models.DateTimeField(null=True)
