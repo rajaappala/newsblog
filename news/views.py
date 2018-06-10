@@ -5,6 +5,7 @@ from datetime import datetime
 from django.core.mail import send_mail,EmailMessage
 from .tasks import *
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -13,7 +14,7 @@ def index(request):
     try:
         news_items = News.objects.filter(is_published = True).order_by('-published_at')
         last_inserted_item = News.objects.filter(is_published = True).last()
-        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_inserted_item.id})
+        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_inserted_item.id if last_inserted_item else 0})
     except:
         return render(request, '500.html', {'msg':"Something went wrong"})
 
@@ -29,13 +30,15 @@ def fetch_latest_posts(request, last_item_id):
 def view_post(request, post_id):
     try:
         post = News.objects.filter(is_published=True, id=int(post_id)).first()
-        return render(request, 'view_post.html', {'post': post})
+        # all_comments = Comments.objects.filter(post_id = int(post.id)).order_by('-created_at') 
+        return render(request, 'view_post.html', {'post': post, 'comments': []})
     except:
         return JsonResponse({'msg':'Post Not Found'}, status=404)
 
 
 def publish(request):
     try:
+        import pdb; pdb.set_trace()
         if request.method == 'POST':
             title = request.POST.get('title', '')
             author = request.POST.get('author', '')
@@ -69,3 +72,19 @@ def notify_admin(request):
         return JsonResponse({'msg': 'Notification sent successfully'}, status=200)
     except:
         return JsonResponse({'msg': 'Something went wrong'}, status=500)
+
+def save_comment(request):
+    try:
+        comment = request.POST.get("comment", '')
+        post_id = request.POST.get('post_id', '')
+        if News.objects.filter(id=int(post_id)).exists():
+            comment_ins = Comments()
+            comment_ins.comment = comment
+            comment_ins.post_id = post_id
+            comment_ins.save()
+            all_comments = Comments.objects.filter(post_id = int(post_id)).order_by('-created_at')
+            return render(request, 'comment_partial.html', {'comments':all_comments})
+        else:
+            return JsonResponse({"msg": 'could not find post'}, status=404)
+    except:
+        return JsonResponse({"error": "Something went wrong"}, status=500)
