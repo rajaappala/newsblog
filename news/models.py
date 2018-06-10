@@ -17,7 +17,7 @@ class News(models.Model):
 
 class Comments(models.Model):
     class Meta:
-        db_table = 'news'
+        db_table = 'comments'
         default_permissions = ()
     id = models.AutoField(primary_key = True)
     comment = models.CharField(max_length = 500, null=True)

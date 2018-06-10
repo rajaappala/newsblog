@@ -30,8 +30,8 @@ def fetch_latest_posts(request, last_item_id):
 def view_post(request, post_id):
     try:
         post = News.objects.filter(is_published=True, id=int(post_id)).first()
-        # all_comments = Comments.objects.filter(post_id = int(post.id)).order_by('-created_at') 
-        return render(request, 'view_post.html', {'post': post, 'comments': []})
+        all_comments = Comments.objects.filter(post_id = int(post.id)).order_by('-created_at') 
+        return render(request, 'view_post.html', {'post': post, 'comments': all_comments})
     except:
         return JsonResponse({'msg':'Post Not Found'}, status=404)
 
