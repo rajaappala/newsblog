@@ -38,7 +38,6 @@ def view_post(request, post_id):
 
 def publish(request):
     try:
-        import pdb; pdb.set_trace()
         if request.method == 'POST':
             title = request.POST.get('title', '')
             author = request.POST.get('author', '')
