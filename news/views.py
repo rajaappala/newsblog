@@ -14,7 +14,8 @@ def index(request):
     try:
         news_items = News.objects.filter(is_published = True).order_by('-published_at')
         last_inserted_item = News.objects.filter(is_published = True).last()
-        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_inserted_item.id if last_inserted_item else 0})
+        last_item_id = last_inserted_item.id if last_inserted_item else 0
+        return render(request, 'index.html', {'news_items':news_items, 'last_item_id': last_item_id})
     except:
         return render(request, '500.html', {'msg':"Something went wrong"})
 
